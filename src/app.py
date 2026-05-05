@@ -1,46 +1,18 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-import pickle
 
 app = FastAPI()
 
-# static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# templates
 templates = Jinja2Templates(directory="templates")
 
-# model load
-try:
-    model = pickle.load(open("model/model_knn.pkl", "rb"))
-except Exception as e:
-    print("Model load error:", e)
-    model = None
-
-# HOME ROUTE (IMPORTANT 🔥)
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request}
+        request=request,          # 👈 IMPORTANT (first arg nahi, named arg)
+        name="index.html",
+        context={}
     )
+from fastapi.staticfiles import StaticFiles
 
-# PREDICT
-@app.get("/predict", response_class=HTMLResponse)
-def predict(request: Request, text: str):
-
-    if model is None:
-        return templates.TemplateResponse(
-            "index.html",
-            {"request": request, "result": "Model not loaded"}
-        )
-
-    prediction = model.predict([text])[0]
-    result = "Spam" if prediction == 1 else "Not Spam"
-
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "result": result}
-    )
+app.mount("/static", StaticFiles(directory="static"), name="static")
