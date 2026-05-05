@@ -1,22 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spam Detector</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spam Detector</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: url("https://images.unsplash.com/photo-1518770660439-4636190af475") no-repeat center;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* dark overlay */
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+}
+
+/* card */
+.container {
+    position: relative;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(14px);
+    padding: 40px;
+    border-radius: 18px;
+    width: 360px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: fadeIn 0.8s ease;
+}
+
+/* animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* title */
+h1 {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.subtext {
+    font-size: 13px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+/* input */
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+/* button */
+button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* result */
+.result {
+    margin-top: 18px;
+    font-size: 16px;
+}
+
+.spam { color: #ff4d4d; font-weight: 600; }
+.ham { color: #4ade80; font-weight: 600; }
+
+/* toggle */
+.toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 18px;
+}
+</style>
 </head>
+
 <body>
 
-    <h1>Spam Detection App</h1>
+<div class="toggle" onclick="toggleTheme()">🌙</div>
+
+<div class="container">
+
+    <h1 id="title"></h1>
+    <p class="subtext">Check if your message is spam or not</p>
 
     <form action="/predict" method="get">
-        <input type="text" name="text" placeholder="Enter your message" size="50">
-        <button type="submit">Check</button>
+        <input type="text" name="text" placeholder="Type your message..." required>
+        <button type="submit">Check Message</button>
     </form>
 
     {% if result %}
-        <h2>Result: {{ result }}</h2>
+        <div class="result">
+            Result:
+            <span class="{{ 'spam' if result == 'Spam' else 'ham' }}">
+                {{ result }}
+            </span>
+        </div>
     {% endif %}
+
+</div>
+
+<script>
+/* typing animation */
+const text = "Spam Detector 🚀";
+let i = 0;
+function typeEffect() {
+    if (i < text.length) {
+        document.getElementById("title").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeEffect, 70);
+    }
+}
+typeEffect();
+
+/* dark mode */
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")) {
+        document.body.style.filter = "brightness(0.8)";
+    } else {
+        document.body.style.filter = "brightness(1)";
+    }
+}
+</script>
 
 </body>
 </html>
