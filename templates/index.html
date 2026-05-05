@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector</title>
+</head>
+<body>
+
+    <h1>Spam Detection App</h1>
+
+    <form action="/predict" method="get">
+        <input type="text" name="text" placeholder="Enter your message" size="50">
+        <button type="submit">Check</button>
+    </form>
+
+    {% if result %}
+        <h2>Result: {{ result }}</h2>
+    {% endif %}
+
+</body>
+</html>
