@@ -13,7 +13,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # model load
-model = pickle.load(open("model/model_knn.pkl", "rb"))
+try:
+    model = pickle.load(open("model/model_knn.pkl", "rb"))
+except Exception as e:
+    print("Model load error:", e)
+    model = None
 
 # HOME ROUTE (IMPORTANT 🔥)
 @app.get("/", response_class=HTMLResponse)
@@ -26,13 +30,17 @@ def home(request: Request):
 # PREDICT
 @app.get("/predict", response_class=HTMLResponse)
 def predict(request: Request, text: str):
+
+    if model is None:
+        return templates.TemplateResponse(
+            "index.html",
+            {"request": request, "result": "Model not loaded"}
+        )
+
     prediction = model.predict([text])[0]
     result = "Spam" if prediction == 1 else "Not Spam"
 
     return templates.TemplateResponse(
         "index.html",
-        {
-            "request": request,
-            "result": result
-        }
+        {"request": request, "result": result}
     )
